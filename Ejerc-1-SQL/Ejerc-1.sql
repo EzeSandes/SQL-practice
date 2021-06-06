@@ -1,7 +1,4 @@
 /***************** EJERCICIO 1 BIS- Resuelto(Tiene otros datos) ********************/
-USE unlam2021;
-
-
 ####################### MIS INSERCIONES
 
 
@@ -62,10 +59,10 @@ WHERE CodArt = 1 AND Nro IN (
 SELECT *
 FROM Articulo
 WHERE precio > 10 OR CodArt IN 
-								(
-									SELECT CodArt FROM
-									Compuesto_por WHERE CodMat = 1
-								);
+				(
+					SELECT CodArt FROM
+					Compuesto_por WHERE CodMat = 1
+				);
 
 SELECT A.codart, c.codmat ,a.descripcion ,a.precio
 FROM Articulo A JOIN Compuesto_por C
@@ -126,21 +123,21 @@ JOIN(
 ON almsRespX.Nro = Tiene.Nro) AS ArtsAlmResX;
 
 -- Para cada articulo necesito saber el CodMaterial que lo componene.
--- FUNCIONA pero debe haber una manera mas facil.
+-- FUNCIONA pero tal vez no es lo mas eficiente.
 SELECT Nombre
 FROM Proveedor
 JOIN
-(SELECT CodProv
-FROM Provisto_por
-JOIN
-(SELECT Compuesto_por.CodArt, CodMat
-FROM Compuesto_por
-JOIN (SELECT CodArt
-FROM Tiene
-JOIN(
-	SELECT Nro
-	FROM Almacen
-	WHERE Responsable = 'Rogelio Rodriguez'
+(	SELECT CodProv
+	FROM Provisto_por
+	JOIN
+		(	SELECT Compuesto_por.CodArt, CodMat
+			FROM Compuesto_por
+			JOIN (	SELECT CodArt
+				FROM Tiene
+	JOIN(
+		SELECT Nro
+		FROM Almacen
+		WHERE Responsable = 'Rogelio Rodriguez'
 	) AS almsRespX
 ON almsRespX.Nro = Tiene.Nro) AS ArtsAlmResX
 ON ArtsAlmResX.CodArt = Compuesto_por.CodArt) AS MatArtProvX
@@ -292,13 +289,13 @@ GROUP BY CodMat;
 SELECT a.CodArt
 FROM articulo a
 WHERE NOT EXISTS	(	SELECT *
-						FROM Material m
-                        WHERE NOT EXISTS	(	SELECT *
-												FROM compuesto_por cp
-                                                WHERE	cp.CodArt = a.codArt
-														AND cp.CodMat = m.codMat
-											)
-					)
+				FROM Material m
+                        	WHERE NOT EXISTS(	SELECT *
+							FROM compuesto_por cp
+                                                	WHERE	cp.CodArt = a.codArt
+							AND cp.CodMat = m.codMat
+						)
+			)
 ;
 
 /*OTRA FORMA: Contar la # de materiales y luego encontrar los articulos con esa misma # de Materiales compuesto*/
@@ -332,24 +329,24 @@ WHERE CodMat = 5 AND CodProv = 3;
 SELECT prov.Ciudad
 FROM proveedor prov
 WHERE NOT EXISTS (	SELECT *
-					FROM proveedor prov2
-                    WHERE NOT EXISTS(	SELECT *
-										FROM provisto_por pp, proveedor prov2
-                                        WHERE	prov2.CodProv = pp.CodProv
-									)
-				)
+		  	FROM proveedor prov2
+                   	WHERE NOT EXISTS	(	SELECT *
+							FROM provisto_por pp, proveedor prov2
+                                        		WHERE	prov2.CodProv = pp.CodProv
+						)
+		)
 ;
 
 SELECT prov.Ciudad
 FROM proveedor prov
 WHERE NOT EXISTS (	SELECT *
-					FROM provisto_por pp
-                    WHERE NOT EXISTS(	SELECT *
-										FROM material m
-                                        WHERE	pp.CodProv = prov.CodProv
-												AND m.codMat = pp.CodMat
-									)
-				)
+			FROM provisto_por pp
+                    	WHERE NOT EXISTS(	SELECT *
+						FROM material m
+                                       		WHERE	pp.CodProv = prov.CodProv
+						AND m.codMat = pp.CodMat
+					)
+		)
 ;
 
 
@@ -357,9 +354,9 @@ WHERE NOT EXISTS (	SELECT *
 SELECT prov.Ciudad
 FROM proveedor prov
 WHERE NOT EXISTS	(	SELECT *
-						FROM provisto_por pp
-                        WHERE pp.CodProv = prov.CodProv
-					)
+				FROM provisto_por pp
+                        	WHERE pp.CodProv = prov.CodProv
+			)
 ;
 
 -- 25. Listar las ciudades donde existan proveedores que provean todos los materiales.
