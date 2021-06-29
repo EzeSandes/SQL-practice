@@ -19,7 +19,7 @@ go
 INSERT INTO pais (pais) VALUES ('Argentina');
 INSERT INTO pais (pais) VALUES ('USA');
 INSERT INTO pais (pais) VALUES ('Uruguay');
-INSERT INTO pais (pais) VALUES ('España');
+INSERT INTO pais (pais) VALUES ('EspaÃ±a');
 INSERT INTO pais (pais) VALUES ('Alemania');
 INSERT INTO pais (pais) VALUES ('Suiza');
 INSERT INTO banco (id, nombre, pais) VALUES ('1', 'Banco Nacion', 'Argentina');
@@ -27,7 +27,7 @@ INSERT INTO banco (id, nombre, pais) VALUES ('2', 'Banco Montevideo', 'Uruguay')
 INSERT INTO banco (id, nombre, pais) VALUES ('3', 'Banco Ciudad', 'Argentina');
 INSERT INTO banco (id, nombre, pais) VALUES ('4', 'City Bank', 'USA');
 INSERT INTO banco (id, nombre, pais) VALUES ('5', 'Switzerland Bank', 'Suiza');
-INSERT INTO banco (id, nombre, pais) VALUES ('6', 'BBVA', 'España');
+INSERT INTO banco (id, nombre, pais) VALUES ('6', 'BBVA', 'EspaÃ±a');
 INSERT INTO moneda (id, descripcion, valorOro, valorPetroleo) VALUES ('AR', 'Peso Argentino','2', '1');
 INSERT INTO moneda (id, descripcion, valorOro, valorPetroleo) VALUES ('UY', 'Peso Uruguayo','5', '2.5');
 INSERT INTO moneda (id, descripcion, valorOro, valorPetroleo) VALUES ('US', 'Dolar', '1','1.5');
