@@ -44,10 +44,17 @@ WHERE nroCli IN (
 				)
 ;
 
+/* Another way */
+SELECT p.*
+FROM pedido p, cliente c
+WHERE	p.nroCli = c.nroCli 
+		AND c.ciudadCli = 'Rosario'
+		AND p.nroArt IN (SELECT nroArt FROM articulo WHERE ciudadArt = 'Mendoza');
+
+
 -- 5. Hallar los pedidos en los que el cliente c23 solicita artículos solicitados por el
 	-- cliente c30.
 
--- BIEN
 SELECT DISTINCT p1.*
 FROM pedido p1, pedido p2
 WHERE p1.nroCli = 'c30' AND p2.nroCli = 'c23' AND p2.nroArt = p1.nroArt
@@ -61,6 +68,11 @@ SELECT *
 FROM pedido 
 WHERE nroCli = 'c30';
 
+/* Another way. I think the above solution is wrong and the following is correct. Just in case I keep both */
+SELECT p.*
+FROM pedido p
+WHERE p.nroCli = 'c23'
+	AND p.nroArt IN (SELECT DISTINCT nroArt FROM pedido WHERE nroCli = 'c30');
 
 -- 6. Hallar los proveedores que suministran todos los artículos cuyo precio es superior
 	-- al precio promedio de los artículos que se producen en La Plata.
@@ -126,9 +138,28 @@ WHERE NOT EXISTS (	SELECT *
 									)
 					)
 )
-GROUP BY nroProv
-HAVING COUNT(*)
-;
+GROUP BY nroProv;
+
+/* Another way*/
+CREATE VIEW proveeTodoCliMendoza
+AS
+SELECT nroProv
+FROM proveedor prov
+WHERE NOT EXISTS	(	SELECT 1
+						FROM cliente cli
+						WHERE cli.ciudadCli = 'Mendoza'
+						AND NOT EXISTS	(	SELECT 1
+											FROM pedido ped
+											WHERE ped.nroCli = cli.nroCli
+													AND ped.nroProv = prov.nroProv
+										)
+					);
+
+
+SELECT nroProv, COUNT(*)
+FROM pedido
+WHERE nroProv IN (SELECT nroProv FROM proveeTodoCliMendoza)
+GROUP BY nroProv;
 
 -- 8. Hallar los nombres de los proveedores cuya categoría sea mayor que la de todos
 	-- los proveedores que proveen el artículo “cuaderno”.
@@ -156,8 +187,16 @@ WHERE p1.categoria > ALL
 						WHERE descripcion = 'cuaderno'
 					)
 			AND pedido.nroProv = proveedor.nroProv
-)
-;
+);
+
+/* Another way */
+SELECT nomProv
+FROM proveedor
+WHERE categoria > (SELECT MAX(prov.categoria) 
+					FROM proveedor prov, pedido ped 
+					WHERE prov.nroProv = ped.nroProv
+					AND ped.nroArt IN (SELECT nroArt FROM articulo WHERE descripcion = 'Cuaderno'));
+
 
 -- 9. Hallar los proveedores que han provisto más de 1000 unidades entre los artículos
 	-- A001y A100.(...mas de 50 unidades entre los articulos a250 y c490)
