@@ -54,13 +54,20 @@ SELECT *
 FROM Tiene
 WHERE CodArt = 1 AND Nro IN (
 		SELECT Nro FROM Tiene WHERE CodArt = 2);
+		
+/* Another way */
+SELECT t1.*
+FROM TIENE t1, TIENE t2
+WHERE t1.Nro = t2.Nro
+	AND t1.CodArt = 1 
+	AND t2.CodArt = 2;
 
 -- 8. Listar los artículos que cuesten más de $10 o que estén compuestos por el material 1.
 SELECT *
 FROM Articulo
 WHERE precio > 10 OR CodArt IN 
 				(
-					SELECT CodArt FROM
+					SELECT DISTINCT CodArt FROM
 					Compuesto_por WHERE CodMat = 1
 				);
 
@@ -81,6 +88,14 @@ FROM Provisto_por ProvPor
 JOIN Proveedor Prov ON Prov.CodProv = ProvPor.codProv
 WHERE Prov.ciudad = 'CABA'
 GROUP BY ProvPor.CodMat; 
+
+/* Another way */
+SELECT DISTINCT mat.CodMat, mat.Descripcion
+FROM Provisto_por pp, Material mat
+WHERE pp.CodMat = mat.CodMat
+		AND pp.CodProv IN (SELECT CodProv FROM Proveedor WHERE Ciudad = 'CABA');
+
+
 -- BIEN. Fijarse que da tambien Bien para la ciudad de 'La Plata' esto.
 
 -- 10. Listar el código, descripción y precio de los artículos que se almacenan en A1(yo use almacen 1).
@@ -90,6 +105,12 @@ JOIN Tiene t
 ON a.codart = t.codart
 WHERE t.nro = 1
 GROUP BY a.codart;
+
+/* Another way */
+SELECT DISTINCT art.*
+FROM Articulo art, TIENE t
+WHERE art.CodArt = t.CodArt
+		AND t.Nro = 1;
 
 -- 11. Listar la descripción de los materiales que componen el artículo B.
 
@@ -101,7 +122,12 @@ JOIN(
 	WHERE CodArt = 4
 	) AS X
 ON X.CodMat = Material.CodMat;
--- Funciona. Se podra hacer de otra manera?
+
+
+/* Another way */
+SELECT mat.Descripcion
+FROM Material mat
+WHERE mat.CodMat IN (SELECT CodMat FROM Compuesto_por WHERE CodArt = 4);
 
 -- 12. Listar los nombres de los proveedores que proveen los materiales al almacén que Martín Gómez(Uso 'Juan Perez') tiene a su cargo.
 SELECT Nro
