@@ -124,7 +124,7 @@ JOIN(
 ON X.CodMat = Material.CodMat;
 
 
-/* Another way */
+/* Another way with codigo articulo = 4*/
 SELECT mat.Descripcion
 FROM Material mat
 WHERE mat.CodMat IN (SELECT CodMat FROM Compuesto_por WHERE CodArt = 4);
@@ -185,29 +185,20 @@ JOIN Proveedor
 ON Proveedor.CodProv = Provisto_por.CodProv
 WHERE Proveedor.Nombre = 'Fiambres Perez';
 
--- 14. Hallar los códigos y nombres de los proveedores que proveen al menos un material que se usa en algún artículo cuyo precio es mayor a $100.
-SELECT Proveedor.CodProv, Proveedor.Nombre
-FROM Proveedor;
+-- 14. Hallar los códigos y nombres de los proveedores que proveen al menos un material que se usa en algún artículo cuyo precio es mayor a $100(Yo uso $10).
 
-SELECT CodProv, Nombre
-FROM Proveedor
-WHERE CodProv IN
-(
-SELECT distinct Provisto_por.CodProv
-FROM provisto_por
-WHERE CodMat IN
-(SELECT Compuesto_por.CodMat
-FROM Compuesto_por
-JOIN (SELECT CodArt
-FROM Articulo
-WHERE precio > 10) AS ArtMayorX
-ON ArtMayorX.codArt = Compuesto_por.codArt)
-);
-
+SELECT DISTINCT prov.CodProv, prov.Nombre
+FROM Proveedor prov, Provisto_por pp
+WHERE prov.CodProv = pp.CodProv
+		AND pp.CodMat IN (	SELECT DISTINCT cp.CodMat FROM Articulo art, Compuesto_por cp 
+							WHERE	art.CodArt = cp.CodArt
+							AND art.Precio > 10
+						 );
 
 -- 15.Listar los números de almacenes que tienen todos los artículos que incluyen el
 -- material con código X.
 
+/* WRONG? */
 SELECT alm.Nro
 FROM Almacen alm
 LEFT JOIN 
@@ -229,6 +220,24 @@ LEFT JOIN
 ) AS Art
 ON tiene.codart = art.codart
 WHERE art.codart IS NULL;
+
+
+/* Another way. This is good */
+--Los articulos 3, 4, 5 estan compuestos por el material con cod = 6
+INSERT INTO TIENE VALUES (2, 5);
+
+SELECT *
+FROM Almacen alm
+WHERE NOT EXISTS	(	SELECT 1
+				FROM Articulo art
+				WHERE CodArt IN (SELECT Compuesto_por.CodArt FROM Compuesto_por, Articulo art WHERE art.CodArt = Compuesto_por.CodArt AND Compuesto_por.CodMat = 1)
+				AND NOT EXISTS	(		SELECT 1
+								FROM TIENE t
+								WHERE t.CodArt = art.CodArt
+								AND t.Nro = alm.Nro
+								)
+					);
+
 
 -- 15.Listar los números de almacenes que tienen todos los artículos que incluyen el
 -- material con código X.
@@ -269,12 +278,40 @@ ORDER BY codMat
 JOIN provisto_por pp
 ON pp.codMat = temp.codMat;
 
+
+/* Another way */
+/*First, Insert rows that verify the exercise*/
+INSERT INTO Provisto_por VALUES (9, 1);
+INSERT INTO Provisto_por VALUES (10, 2);
+
+--Con esto, el material que de 1 sera el que sea proveido por un solo proveedor.
+SELECT pp.codProv
+FROM Provisto_por pp
+WHERE pp.CodMat IN 
+(
+SELECT pp.CodMat
+FROM Provisto_por pp
+GROUP BY pp.CodMat
+HAVING COUNT(*) = 1
+);
+
+
 -- 17. Listar el/los artículo/s de mayor precio.
 SELECT *
 FROM Articulo
 ORDER BY precio DESC
 LIMIT 3;
 
+/* SQL SERVER */
+SELECT TOP 1 *
+FROM Articulo
+ORDER BY Precio DESC;
+
+/* Another way */
+-- Personally, I think  this is better because If it is more than one product with the max price this query will show them.
+SELECT codArt, Descripcion
+FROM Articulo
+WHERE precio = (SELECT MAX(Precio) FROM Articulo);
 
 
 -- 21. Listar los artículos compuestos por al menos 2 materiales.
