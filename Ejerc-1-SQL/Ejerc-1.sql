@@ -313,6 +313,26 @@ SELECT codArt, Descripcion
 FROM Articulo
 WHERE precio = (SELECT MAX(Precio) FROM Articulo);
 
+-- 18. Listar el/los artículo/s de menor precio.
+
+SELECT *
+FROM Articulo
+WHERE Precio = (SELECT MIN(Precio) FROM Articulo);
+
+-- 19. Listar el promedio de precios de los artículos en cada almacén.
+
+SELECT t.Nro, AVG(art.Precio)
+FROM Articulo art, TIENE t
+WHERE art.CodArt = t.CodArt
+GROUP BY t.Nro;
+
+-- 20. Listar los almacenes que almacenan la mayor cantidad de artículos.
+
+SELECT Nro
+FROM TIENE
+GROUP BY Nro
+HAVING COUNT(*) = ( SELECT MAX(temp.cantArticulos) FROM (SELECT COUNT(*) AS cantArticulos FROM TIENE GROUP BY Nro) AS temp);
+
 
 -- 21. Listar los artículos compuestos por al menos 2 materiales.
 
@@ -344,6 +364,8 @@ GROUP BY CodArt
 HAVING COUNT(*) <= 2;
 
 -- 24. Listar los artículos compuestos por todos los materiales.
+
+/*Only to see the amount*/
 SELECT CodMat, COUNT(*) AS CANT
 FROM Compuesto_por
 GROUP BY CodMat;
