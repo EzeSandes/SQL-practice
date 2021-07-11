@@ -114,6 +114,18 @@ SELECT *
 FROM Proveedor
 WHERE fecha_alta LIKE '199_%';
 
+--2. Listar el/los proveedores dados de alta en la fecha más reciente.
+
+SELECT *
+FROM Proveedor
+WHERE fecha_alta = (SELECT MAX(fecha_alta) FROM Proveedor);
+
+--3) - Listar los artículos cuyo precio supera la media.
+
+SELECT *
+FROM Articulo
+WHERE Precio > (SELECT AVG(Precio) FROM Articulo);
+
 -- 4) - Listar todos los códigos de artículos, descripción y los códigos de materiales por los
 -- que están compuestos, informando “9999” en el código “material” para el caso de los
 -- artículos que no están compuestos por ningún material
