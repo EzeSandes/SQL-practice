@@ -52,6 +52,10 @@ Select cp.CodArt
 FROM Compuesto_por cp
 WHERE cp.codMat = 1;
 
+/*Another way*/
+SELECT DISTINCT a.codArt
+FROM Articulo a, Compuesto_Por cp
+WHERE a.Precio > 100 OR (cp.CodArt = a.CodArt AND cp.CodMat = 1);
 
 -- 14. Hallar los códigos y nombres de los proveedores que proveen al menos un material 
 -- que se usa en algún artículo cuyo precio es mayor a $100.
@@ -113,6 +117,11 @@ WHERE NOT EXISTS	(SELECT 1
 SELECT *
 FROM Proveedor
 WHERE fecha_alta LIKE '199_%';
+
+/* Another way */
+SELECT *
+FROM Proveedor
+WHERE fecha_alta BETWEEN '1990-01-01' AND '1999-12-31';
 
 --2. Listar el/los proveedores dados de alta en la fecha más reciente.
 
