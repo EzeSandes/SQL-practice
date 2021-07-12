@@ -30,7 +30,7 @@ WHERE id_producto NOT IN 	(
                                 FROM detalle_venta
 							);
 
-#Otra
+#Another way
 SELECT p.id_producto
 FROM producto p
 WHERE NOT EXISTS 
@@ -39,12 +39,17 @@ WHERE NOT EXISTS
     FROM detalle_venta dv
     WHERE dv.id_producto = p.id_producto
 );
--- 4. Indique la cantidad de unidades que fueron vendidas de cada producto.
 
-# Mine. Bad?? It seems that yes :(
-SELECT id_producto, COUNT(*) AS Cant
-FROM detalle_venta dv
-GROUP BY id_producto;
+
+#Another way
+SELECT p.*
+FROM Producto p
+LEFT JOIN Detalle_venta dv
+ON p.Id_producto = dv.Id_producto
+WHERE dv.Id_producto IS NULL;
+
+
+-- 4. Indique la cantidad de unidades que fueron vendidas de cada producto.
 
 # Otra. Bien
 SELECT p.id_producto, SUM(cantidad)
@@ -53,10 +58,11 @@ JOIN detalle_venta dv
 ON p.Id_producto = dv.Id_producto
 GROUP BY p.id_producto;
 
-SELECT p.id_producto, ISNULL(SUM(cantidad), 0) 'Cantidad'
+SELECT p.id_producto, ISNULL(SUM(cantidad), 0) AS 'Cantidad'
 FROM producto p
 LEFT JOIN detalle_venta dv
-ON p.Id_producto = dv.Id_producto;
+ON p.Id_producto = dv.Id_producto
+GROUP BY p.Id_producto;
 
 -- 5. Indique cual es la cantidad promedio de unidades vendidas de cada producto.
 
@@ -65,6 +71,13 @@ FROM producto p
 JOIN detalle_venta dv
 ON p.Id_producto = dv.Id_producto
 GROUP BY p.id_producto;
+
+/* Better way */
+SELECT p.Id_producto, ISNULL(AVG(cantidad), 0) AS 'Cantidad'
+FROM Producto p
+LEFT JOIN Detalle_venta dv
+ON p.Id_producto = dv.Id_producto
+GROUP BY p.Id_producto;
 
 
 -- 6. Indique quien es el vendedor con mas ventas realizadas.
@@ -96,6 +109,13 @@ WHERE vxv.CantVentas = (
                         )
 ;
 
+/* Another Way */
+SELECT v.Id_vendedor, COUNT(*)
+FROM Vendedor vend
+JOIN Venta v
+ON v.Id_vendedor = vend.Id_vendedor
+GROUP BY v.Id_vendedor
+HAVING COUNT(*) = (SELECT MAX(temp.cant) FROM (SELECT COUNT(*) AS Cant FROM Vendedor JOIN Venta ON Venta.Id_vendedor = Vendedor.Id_vendedor GROUP BY Venta.Id_vendedor) AS temp);
 
 
 
