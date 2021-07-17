@@ -1,3 +1,8 @@
+/***************************************************************/
+/******** IMPORTANT: This exercise was do it in MySQL *****/
+/***************************************************************/
+
+
 USE ejerc2;
 
 -- 1. Hallar el código (nroProv) de los proveedores que proveen el artículo a146.
