@@ -85,18 +85,44 @@ SELECT CodProv
 FROM Proveedor
 WHERE Ciudad = 'CABA';
 
+-- 1
 SELECT *-- ProvPor.CodMat
 FROM Provisto_por ProvPor
 JOIN Proveedor Prov ON Prov.CodProv = ProvPor.codProv
 WHERE Prov.ciudad = 'CABA'
 GROUP BY ProvPor.CodMat; 
+-------
 
-/* Another way */
+/* 2 - Another way */
 SELECT DISTINCT mat.CodMat, mat.Descripcion
 FROM Provisto_por pp, Material mat
 WHERE pp.CodMat = mat.CodMat
 		AND pp.CodProv IN (SELECT CodProv FROM Proveedor WHERE Ciudad = 'CABA');
 
+-------
+
+-- 3
+SELECT *
+FROM Material
+WHERE CodMat IN (
+			SELECT DISTINCT pp.CodMat
+			FROM Provisto_por pp
+			JOIN Proveedor prov
+			ON prov.CodProv = pp.CodProv
+			WHERE prov.Ciudad LIKE '%CABA'
+		);
+
+-------
+
+-- 4 
+SELECT *
+FROM Material mat
+WHERE mat.CodMat IN	(
+				SELECT DISTINCT CodMat FROM Provisto_por WHERE CodProv IN 
+				(SELECT CodProv FROM Proveedor WHERE Ciudad LIKE 'CABA')
+			)
+
+-------
 
 -- BIEN. Fijarse que da tambien Bien para la ciudad de 'La Plata' esto.
 
