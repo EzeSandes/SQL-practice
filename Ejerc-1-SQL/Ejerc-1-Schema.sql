@@ -61,7 +61,8 @@ INSERT INTO Material VALUES
 	(5, 'Pan Pancho'),
 	(6, 'Paty'),
 	(7, 'Lechuga'),
-	(8, 'Tomate');
+	(8, 'Tomate'),
+	(9, 'Ajo');
 
 INSERT INTO Proveedor VALUES
 	(1, 'Panaderia Carlitos', 'Carlos Calvo 1212', 'CABA'),
