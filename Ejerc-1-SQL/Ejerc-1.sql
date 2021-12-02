@@ -1,6 +1,6 @@
 /***************** EJERCICIO 1 BIS- Resuelto(Tiene otros datos) ********************/
 
-/****************** DONE IN MySQ **********************************/
+/****************** DONE IN SQL Server **********************************/
 ####################### MIS INSERCIONES
 
 
@@ -140,6 +140,15 @@ FROM Articulo art, TIENE t
 WHERE art.CodArt = t.CodArt
 		AND t.Nro = 1;
 
+/* Another way */		
+SELECT art.*
+FROM Articulo art
+JOIN	(	SELECT t.CodArt
+			FROM TIENE t
+			WHERE t.Nro = 1
+		) AS t2
+ON art.CodArt = t2.CodArt;
+
 -- 11. Listar la descripción de los materiales que componen el artículo B.
 
 SELECT Descripcion
@@ -156,6 +165,11 @@ ON X.CodMat = Material.CodMat;
 SELECT mat.Descripcion
 FROM Material mat
 WHERE mat.CodMat IN (SELECT CodMat FROM Compuesto_por WHERE CodArt = 4);
+
+/* Another way with codigo articulo = 4*/
+SELECT mat.Descripcion
+FROM Compuesto_por cp, Articulo art, Material mat
+WHERE art.CodArt = cp.CodArt	AND	 art.CodArt = 4		AND mat.CodMat = cp.CodMat;
 
 -- 12. Listar los nombres de los proveedores que proveen los materiales al almacén que Martín Gómez(Uso 'Juan Perez') tiene a su cargo.
 SELECT Nro
@@ -212,6 +226,14 @@ ON Provisto_por.CodMat = Material.CodMat
 JOIN Proveedor
 ON Proveedor.CodProv = Provisto_por.CodProv
 WHERE Proveedor.Nombre = 'Fiambres Perez';
+
+/*Another way*/
+SELECT DISTINCT art.CodArt, art.Descripcion
+FROM Articulo art, Compuesto_por cp, Provisto_por pp, Proveedor prov
+WHERE	prov.Nombre = 'Fiambres Perez'
+		AND	pp.CodProv = prov.CodProv
+		AND cp.CodMat = pp.CodMat
+		AND cp.CodArt = art.CodArt
 
 -- 14. Hallar los códigos y nombres de los proveedores que proveen al menos un material que se usa en algún artículo cuyo precio es mayor a $100(Yo uso $10).
 
